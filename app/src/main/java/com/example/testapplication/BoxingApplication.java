@@ -36,7 +36,7 @@ public class BoxingApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        IBoxingMediaLoader loader = new BoxingGlideLoader();
+        IBoxingMediaLoadAndTranser loader = new BoxingGlideLoader();
         BoxingMediaLoader.getInstance().init(loader);
         BoxingCrop.getInstance().init(new BoxingUcrop());
     }

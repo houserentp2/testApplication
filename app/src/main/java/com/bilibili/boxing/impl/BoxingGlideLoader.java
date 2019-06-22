@@ -19,15 +19,23 @@ package com.bilibili.boxing.impl;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.testapplication.Base64Util;
 import com.example.testapplication.R;
 import com.bilibili.boxing.loader.IBoxingCallback;
-import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.testapplication.IBoxingMediaLoadAndTranser;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 
 /**
  * use https://github.com/bumptech/glide as media loader.
@@ -35,10 +43,11 @@ import com.bumptech.glide.request.target.Target;
  *
  * @author ChenSL
  */
-public class BoxingGlideLoader implements IBoxingMediaLoader {
+public class BoxingGlideLoader implements IBoxingMediaLoadAndTranser {
 
     @Override
     public void displayThumbnail(@NonNull ImageView img, @NonNull String absPath, int width, int height) {
+        Log.d("++++++++++", "displayThumbnail: ");
         String path = "file://" + absPath;
         try {
             // https://github.com/bumptech/glide/issues/1531
@@ -50,6 +59,7 @@ public class BoxingGlideLoader implements IBoxingMediaLoader {
 
     @Override
     public void displayRaw(@NonNull final ImageView img, @NonNull String absPath, int width, int height, final IBoxingCallback callback) {
+        Log.d("******", "displayRaw: ");
         String path = "file://" + absPath;
         BitmapTypeRequest<String> request = Glide.with(img.getContext())
                 .load(path)
@@ -80,4 +90,29 @@ public class BoxingGlideLoader implements IBoxingMediaLoader {
 
     }
 
+
+    @Override
+    public void displayThumbnailandTran(@NonNull ImageView img, @NonNull LinkedList<String> bag, @NonNull String absPath, int width, int height) {
+        Log.d("-------", "displayThumbnailandTran: ");
+        String path = "file://" + absPath;
+        try {
+            // https://github.com/bumptech/glide/issues/1531
+            Glide.with(img.getContext()).load(path).asBitmap().into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    img.setImageBitmap(resource);
+                    bag.add(Base64Util.BitmapToBase64(resource));
+                    Log.d(bag.getLast(), "onResourceReady: ");
+                }
+            });
+            Glide.with(img.getContext()).load(path).placeholder(R.drawable.ic_boxing_default_image).crossFade().centerCrop().override(width, height).into(img);
+        } catch(IllegalArgumentException ignore) {
+            ignore.printStackTrace();
+        }
+    }
+
+    @Override
+    public void displayRawandTran(@NonNull ImageView img, @NonNull LinkedList<String> bag, @NonNull String absPath, int width, int height, IBoxingCallback callback) {
+
+    }
 }

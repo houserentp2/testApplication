@@ -28,7 +28,9 @@ import com.bilibili.boxing_impl.ui.BoxingActivity;
 import com.bilibili.boxing_impl.ui.BoxingBottomSheetActivity;
 import com.bilibili.boxing_impl.view.SpacesItemDecoration;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,6 +40,7 @@ public class DisplayPicsActivity extends AppCompatActivity implements View.OnCli
 
     private RecyclerView mRecyclerView;
     private MediaResultAdapter mAdapter;
+    public LinkedList<String> ImagesBag=new LinkedList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +109,9 @@ public class DisplayPicsActivity extends AppCompatActivity implements View.OnCli
                 Boxing.of(videoConfig).withIntent(this, BoxingActivity.class).start(this, REQUEST_CODE);
                 break;
             case R.id.outside_bs_btn:
-                BoxingConfig bsConfig = new BoxingConfig(BoxingConfig.Mode.SINGLE_IMG);
-                Boxing.of(bsConfig).withIntent(this, BoxingBottomSheetActivity.class).start(this, REQUEST_CODE);
+                //BoxingConfig bsConfig = new BoxingConfig(BoxingConfig.Mode.SINGLE_IMG);
+                //Boxing.of(bsConfig).withIntent(this, BoxingBottomSheetActivity.class).start(this, REQUEST_CODE);
+
                 break;
 
             default:
@@ -139,6 +143,7 @@ public class DisplayPicsActivity extends AppCompatActivity implements View.OnCli
                     imageMedias.add(imageMedia);
                     mAdapter.setList(imageMedias);
                 }
+
 
             }
         }
@@ -186,7 +191,17 @@ public class DisplayPicsActivity extends AppCompatActivity implements View.OnCli
                 } else {
                     path = media.getPath();
                 }
-                BoxingMediaLoader.getInstance().displayThumbnail(mediaViewHolder.mImageView, path, 150, 150);
+                //BoxingMediaLoader.getInstance().displayThumbnail(mediaViewHolder.mImageView, path, 150, 150);
+
+                try{
+                    Method method=null;
+                    method=BoxingMediaLoader.getInstance().getLoader().getClass().getMethod("displayThumbnailandTran",ImageView.class,LinkedList.class,String.class,int.class,int.class);
+                    method.invoke(BoxingMediaLoader.getInstance().getLoader(),mediaViewHolder.mImageView,ImagesBag, path, 150, 150);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
         }
 
