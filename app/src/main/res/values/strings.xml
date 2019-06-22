@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">testApplication</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="display_pic_title">图片选择器</string>
+    <string name="bottom_sheet">Bottom Sheet</string>
+</resources>
